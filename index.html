@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đồng Minh Quân - 3D Artist Portfolio</title>
+    <!-- Chèn font Inter hiện đại -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- TỐI ƯU UI/UX & SIÊU HIỆU ỨNG CHUYỂN ĐỘNG --- */
+        :root {
+            --bg-color: #080b11;      
+            --card-bg: #111622;       
+            --accent-color: #00ff88;  /* Đổi sang màu Neon Green sáng hơn để tăng hiệu ứng WOW */
+            --text-main: #f3f4f6;     
+            --text-muted: #9ca3af;    
+        }
+
+        /* Định nghĩa các Animation khởi động trang web */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(0, 255, 136, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header với hiệu ứng xuất hiện mượt mà */
+        header {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 40px 20px;
+            animation: fadeInUp 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ffffff 30%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        header p span {
+            color: var(--accent-color);
+            font-weight: 500;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+        }
+
+        .portfolio-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 100px 20px;
+        }
+
+        /* Tiêu đề mục có đường line chạy dài động */
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 40px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: fadeInUp 1s cubic-bezier(0.25, 1, 0.5, 1) 0.2s forwards;
+            opacity: 0;
+        }
+
+        .section-title::after {
+            content: "";
+            height: 1px;
+            flex-grow: 1;
+            background: linear-gradient(to right, rgba(0, 255, 136, 0.4), transparent);
+        }
+
+        /* Bố cục lưới danh sách dự án */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 40px;
+            animation: fadeInUp 1s cubic-bezier(0.25, 1, 0.5, 1) 0.4s forwards;
+            opacity: 0;
+        }
+
+        @media (max-width: 600px) {
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* CARD DỰ ÁN CAO CẤP: Hiệu ứng 3D phát sáng và nhấc bề mặt */
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                        border-color 0.4s ease, 
+                        box-shadow 0.4s ease;
+        }
+
+        /* Khi rê chuột vào Card: Đổ bóng rực rỡ và nghiêng nhẹ góc nhìn */
+        .project-card:hover {
+            transform: translateY(-12px) scale(1.01);
+            border-color: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 
+                        0 0 30px rgba(0, 255, 136, 0.05);
+        }
+
+        /* Khung chứa Media */
+        .project-media {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            background-color: #010409;
+            overflow: hidden;
+        }
+
+        .project-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+        }
+
+        /* UX: Hình ảnh zoom mượt chậm khi rê chuột */
+        .project-card:hover .project-media img {
+            transform: scale(1.08);
+            opacity: 1;
+        }
+
+        /* Lớp phủ hiệu ứng Play mờ ảo */
+        .media-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(8, 11, 17, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .project-card:hover .media-overlay {
+            opacity: 1;
+        }
+
+        /* Icon Play có hiệu ứng nhịp đập Pulse của các rạp phim high-tech */
+        .play-icon {
+            background: rgba(0, 255, 136, 0.9);
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #080b11;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-indent: 4px; /* Giúp căn giữa icon tam giác cân đối hơn */
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover .play-icon {
+            animation: pulseGlow 1.5s infinite;
+        }
+
+        /* Nội dung chi tiết */
+        .project-info {
+            padding: 35px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .project-title a {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .project-card:hover .project-title a {
+            color: var(--accent-color);
+        }
+
+        /* Thẻ từ khóa công cụ (Tags) */
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 16px 0 24px 0;
+        }
+
+        .tech-tag {
+            background: rgba(255, 255, 255, 0.04);
+            color: #d1d5db;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        /* Khi hover vào từng thẻ tag lẻ */
+        .tech-tag:hover {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--accent-color);
+            border-color: rgba(0, 255, 136, 0.2);
+        }
+
+        .project-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-weight: 300;
+            flex-grow: 1;
+        }
+
+        /* NÚT BẤM SIÊU HIỆU ỨNG (Slide Gradient Button) */
+        .btn-view {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 14px 28px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            width: fit-content;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        /* Tạo lớp nền ẩn chạy từ bên trái qua khi Hover */
+        .btn-view::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent-color);
+            transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: -1;
+        }
+
+        .btn-view:hover::before {
+            left: 0;
+        }
+
+        /* Thay đổi màu chữ mượt mà và đẩy nhẹ dấu mũi tên */
+        .btn-view:hover {
+            color: var(--bg-color);
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-view span {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-view:hover span {
+            transform: translateX(4px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(156, 163, 175, 0.3);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ĐỒNG MINH QUÂN</h1>
+        <p>3D Artist Portfolio — <span>Thực Tập Sinh Thiết Kế Đồ Họa</span></p>
+    </header>
+
+    <main class="portfolio-container">
+        <h2 class="section-title">Dự Án Cá Nhân</h2>
+        
+        <div class="portfolio-grid">
+
+            <!-- DỰ ÁN 1: REMAKE ZOMBIE ON YOUR LAWN -->
+            <div class="project-card">
+                <div class="project-media">
+                    <a href="https://youtu.be/vgxxSzhQTAI" target="_blank">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80" alt="Remake MV Zombie On Your Lawn">
+                        <div class="media-overlay">
+                            <div class="play-icon">▶</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="project-info">
+                    <h3 class="project-title">
+                        <a href="https://youtu.be/vgxxSzhQTAI" target="_blank">
+                            Chuyển Động Với C4D - Remake MV "Zombie on Your Lawn"
+                        </a>
+                    </h3>
+                    <div class="project-tech">
+                        <span class="tech-tag">Cinema 4D R26</span>
+                        <span class="tech-tag">Premiere Pro</span>
+                        <span class="tech-tag">Rigging & Animation</span>
+                    </div>
+                    <p class="project-desc">
+                        Dự án diễn hoạt 3D cá nhân mang tính thử thách cao. Thực hiện lên kịch bản chuyển động bám sát nguyên tác, trực tiếp gắn xương (rigging) nhân vật Sunflower, Peashooter, thiết lập ánh sáng môi trường và biên tập hiệu ứng video hoàn thiện.
+                    </p>
+                    <a href="https://youtu.be/vgxxSzhQTAI" target="_blank" class="btn-view">
+                        Xem trên YouTube <span>→</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- DỰ ÁN 2: PHỐI SÁNG BLENDER -->
+            <div class="project-card">
+                <div class="project-media">
+                    <a href="https://youtu.be/v3qev_uBlyw" target="_blank">
+                        <img src="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=800&q=80" alt="Phối sáng Blender">
+                        <div class="media-overlay">
+                            <div class="play-icon">▶</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="project-info">
+                    <h3 class="project-title">
+                        <a href="https://youtu.be/v3qev_uBlyw" target="_blank">
+                            Phối sáng & Chuyển động cơ bản với model sẵn có trên Blender
+                        </a>
+                    </h3>
+                    <div class="project-tech">
+                        <span class="tech-tag">Blender 4.0</span>
+                        <span class="tech-tag">Cycles Engine</span>
+                        <span class="tech-tag">Lighting Studio</span>
+                    </div>
+                    <p class="project-desc">
+                        Nghiên cứu chuyên sâu về nghệ thuật sắp đặt ánh sáng (Lighting Studio). Thử nghiệm diễn hoạt các chuyển động mượt mà dựa trên bộ model có sẵn, tập trung tối ưu hóa vật liệu bề mặt và ứng dụng Cycles Engine để tạo ra sản phẩm render chân thực.
+                    </p>
+                    <a href="https://youtu.be/v3qev_uBlyw" target="_blank" class="btn-view">
+                        Xem trên YouTube <span>→</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 Đồng Minh Quân. Thiết kế tối giản dành cho 3D Showcase.</p>
+    </footer>
+
+</body>
+</html>
